@@ -1,0 +1,6 @@
+{
+  "name": "자소서 작성 가이드북",
+  "description": "취업준비생이 자기소개서를 처음부터 끝까지 따라 쓰며 완성할 수 있는 인터랙티브 작성 가이드북",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
