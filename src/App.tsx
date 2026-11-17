@@ -371,7 +371,7 @@ export default function App() {
             className="scroll-mt-20 border-b border-slate-200 pb-10 dark:border-slate-800"
           >
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-slate-50">
-              {SITE_META.title}
+              자소서 작성 가이드북 feat.장준혁
             </h1>
 
             <div className="mt-5">
