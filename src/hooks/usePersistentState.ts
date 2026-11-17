@@ -229,11 +229,18 @@ export function useWorkbookState() {
   const [storageAvailable, setStorageAvailable] = useState<boolean>(() =>
     testStorageAvailability()
   );
+  const [saveSuccessTick, setSaveSuccessTick] = useState<number>(0);
   const latestStateRef = useRef<GuideWorkbookState>(state);
   const hasInteractedRef = useRef<boolean>(false);
+  const lastWriteOkRef = useRef<boolean>(storageAvailable);
 
   useEffect(() => {
     latestStateRef.current = state;
+    if (!hasInteractedRef.current) return;
+    setStorageAvailable(lastWriteOkRef.current);
+    if (lastWriteOkRef.current) {
+      setSaveSuccessTick((tick) => tick + 1);
+    }
   }, [state]);
 
   const updateState = useCallback(
@@ -246,8 +253,7 @@ export function useWorkbookState() {
           updatedAt: new Date().toISOString(),
         };
         latestStateRef.current = next;
-        const ok = safeWriteStorage(next);
-        setStorageAvailable(ok);
+        lastWriteOkRef.current = safeWriteStorage(next);
         return next;
       });
     },
@@ -272,8 +278,10 @@ export function useWorkbookState() {
     };
     latestStateRef.current = fresh;
     safeRemoveStorage();
+    const available = testStorageAvailability();
+    lastWriteOkRef.current = available;
+    setStorageAvailable(available);
     setState(fresh);
-    setStorageAvailable(testStorageAvailability());
   }, []);
 
   // Flush latest state on page hide / tab switch / browser close
@@ -306,6 +314,7 @@ export function useWorkbookState() {
   useEffect(() => {
     const handleStorageEvent = (event: StorageEvent) => {
       if (event.key !== STORAGE_KEY) return;
+      hasInteractedRef.current = false;
       const synced = sanitizeWorkbookState(event.newValue);
       latestStateRef.current = synced;
       setState(synced);
@@ -315,7 +324,13 @@ export function useWorkbookState() {
     return () => window.removeEventListener('storage', handleStorageEvent);
   }, []);
 
-  return { state, updateState, resetWorkbook, storageAvailable };
+  return {
+    state,
+    updateState,
+    resetWorkbook,
+    storageAvailable,
+    saveSuccessTick,
+  };
 }
 
 export function buildExportText(state: GuideWorkbookState): string {

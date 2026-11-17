@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Check,
   ChevronDown,
@@ -779,3 +779,45 @@ export function WorkbookStorageControl({
     </div>
   );
 }
+
+/* 12. Auto-Save Bottom Toast Notification */
+export function AutoSaveToast({ saveSuccessTick }: { saveSuccessTick: number }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (saveSuccessTick <= 0) {
+      setVisible(false);
+      return;
+    }
+    setVisible(true);
+    const timer = window.setTimeout(() => {
+      setVisible(false);
+    }, 2000);
+    return () => window.clearTimeout(timer);
+  }, [saveSuccessTick]);
+
+  return (
+    <div
+      className="no-print pointer-events-none fixed inset-x-0 bottom-5 z-50 flex justify-center px-4"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <div
+        aria-hidden={!visible}
+        className={`inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white/95 px-3.5 py-2 text-sm font-medium text-slate-800 shadow-sm backdrop-blur-xs transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-100 ${
+          visible
+            ? 'translate-y-0 opacity-100'
+            : 'translate-y-2 opacity-0'
+        }`}
+      >
+        <Check
+          className="h-4 w-4 shrink-0 text-blue-900 dark:text-blue-400"
+          aria-hidden="true"
+        />
+        <span>자동 저장됨</span>
+      </div>
+    </div>
+  );
+}
+

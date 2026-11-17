@@ -32,6 +32,7 @@ import {
   useWorkbookState,
 } from './hooks/usePersistentState';
 import {
+  AutoSaveToast,
   BeforeAfterComparison,
   CollapsibleEvidence,
   CompanyAnalysisWorksheet,
@@ -71,8 +72,13 @@ function renderWhereWithLinks(
 }
 
 export default function App() {
-  const { state, updateState, resetWorkbook, storageAvailable } =
-    useWorkbookState();
+  const {
+    state,
+    updateState,
+    resetWorkbook,
+    storageAvailable,
+    saveSuccessTick,
+  } = useWorkbookState();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSectionId, setActiveSectionId] = useState<string>('section-0');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -1317,6 +1323,7 @@ export default function App() {
           </footer>
         </main>
       </div>
+      <AutoSaveToast saveSuccessTick={saveSuccessTick} />
     </div>
   );
 }
